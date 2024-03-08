@@ -88,8 +88,8 @@
                 </table>
 
                 <a class="btn btn-outline-info btn-sm">First</a>&nbsp;
-                <a href="/Article/Index?act=prev&pageNumber=@pageNumber" class="btn btn-outline-info btn-sm">Prev</a>&nbsp;
-                <a href="/Article/Index?act=next&pageNumber=@pageNumber" class="btn btn-outline-info btn-sm">Next</a>&nbsp;
+                <a href="/Article/Index?act=prev&pageNumber=@pageNumber&category=@ViewBag.CategoryName&search=@ViewData["search"]" class="btn btn-outline-info btn-sm">Prev</a>&nbsp;
+                <a href="/Article/Index?act=next&pageNumber=@pageNumber&category=@ViewBag.CategoryName&search=@ViewData["search"]" class="btn btn-outline-info btn-sm">Next</a>&nbsp;
                 <a class="btn btn-outline-info btn-sm">Last</a>
 
             </div>
