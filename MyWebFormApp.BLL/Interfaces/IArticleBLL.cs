@@ -13,7 +13,7 @@ namespace MyWebFormApp.BLL.Interfaces
         void Update(ArticleUpdateDTO article);
         void Delete(int id);
         ArticleDTO GetArticleById(int id);
-        IEnumerable<ArticleDTO> GetWithPaging(int pageNumber, int pageSize, string name);
+        IEnumerable<ArticleDTO> GetWithPaging(int pageNumber, int pageSize, string name, string categoryFilter);
         int GetCountArticles(string name);
     }
 }

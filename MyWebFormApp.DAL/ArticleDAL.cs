@@ -261,14 +261,14 @@ namespace MyWebFormApp.DAL
             }
         }
 
-        public IEnumerable<Article> GetWithPaging(int pageNumber, int pageSize, string name)
+        public IEnumerable<Article> GetWithPaging(int pageNumber, int pageSize, string name, string categoryFilter)
         {
             using (SqlConnection conn = new SqlConnection(GetConnectionString()))
             {
                 var strSql = @"select a.ArticleID, a.CategoryID, a.Title, a.Details, a.PublishDate, a.IsApproved, a.Pic, c.CategoryID, c.CategoryName from Articles as a inner join Categories as c on a.CategoryID = c.CategoryID 
-                               where a.Title like @Title
+                               where a.Title like @Title and c.CategoryName like @CategoryFilter
                                order by a.Title OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY";
-                var param = new { Title = $"%{name}%", Offset = (pageNumber - 1) * pageSize, PageSize = pageSize };
+                var param = new { Title = $"%{name}%", CategoryFilter = $"%{categoryFilter}%", Offset = (pageNumber - 1) * pageSize, PageSize = pageSize };
                 var results = conn.Query<Article, Category, Article>(strSql, (article, category) =>
                 {
                     article.Category = category;

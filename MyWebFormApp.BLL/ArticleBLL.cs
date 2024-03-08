@@ -110,10 +110,10 @@ namespace MyWebFormApp.BLL
             return _articleDAL.GetCountArticles(name);
         }
 
-        public IEnumerable<ArticleDTO> GetWithPaging(int pageNumber, int pageSize, string name)
+        public IEnumerable<ArticleDTO> GetWithPaging(int pageNumber, int pageSize, string name, string categoryFilter)
         {
             List<ArticleDTO> articles = new List<ArticleDTO>();
-            var articlesFromDAL = _articleDAL.GetWithPaging(pageNumber, pageSize, name);
+            var articlesFromDAL = _articleDAL.GetWithPaging(pageNumber, pageSize, name, categoryFilter);
             foreach (var article in articlesFromDAL)
             {
                 articles.Add(new ArticleDTO

@@ -11,7 +11,7 @@ namespace MyWebFormApp.DAL.Interfaces
         //int GetCountArticles();
         int InsertWithIdentity(Article article);
         void InsertArticleWithCategory(Article article);
-        IEnumerable<Article> GetWithPaging(int pageNumber, int pageSize, string name);
+        IEnumerable<Article> GetWithPaging(int pageNumber, int pageSize, string name, string categoryFilter);
         int GetCountArticles(string name);
     }
 }
