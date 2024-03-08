@@ -8,10 +8,12 @@ namespace SampleMVC.Controllers
     public class ArticleController : Controller
     {
         private readonly IArticleBLL _articleBLL;
+        private CategoryBLL _categoryBLL;
 
-        public ArticleController(IArticleBLL articleBLL)
+        public ArticleController(IArticleBLL articleBLL, ICategoryBLL categoryBLL)
         {
             _articleBLL = articleBLL;
+            _categoryBLL = new CategoryBLL();
         }
 
         public IActionResult Index(int pageNumber = 1, int pageSize = 5, string search = "", string act = "" )
@@ -59,6 +61,8 @@ namespace SampleMVC.Controllers
 
         public IActionResult Create()
         {
+            var categoryOptions = _categoryBLL.GetAll();
+            ViewBag.Categories = categoryOptions;
             return View();
         }
 
@@ -67,7 +71,13 @@ namespace SampleMVC.Controllers
         {
             try
             {
-                _articleBLL.Insert(articleCreate);
+                
+                ArticleCreateDTO articleCreateDTO = new ArticleCreateDTO();
+                articleCreateDTO.Title = articleCreate.Title;
+                articleCreateDTO.Details = articleCreate.Details;
+                articleCreateDTO.IsApproved = articleCreate.IsApproved;
+                articleCreateDTO.CategoryID = articleCreate.CategoryID;
+                _articleBLL.Insert(articleCreateDTO);
                 TempData["message"] = @"<div class='alert alert-success'><strong>Success!</strong>Add Data Article Success !</div>";
             }
             catch (Exception ex)
