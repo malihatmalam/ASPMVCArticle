@@ -138,5 +138,22 @@ public class CategoriesController : Controller
         return RedirectToAction("Index");
     }
 
+    public IActionResult DisplayDropdownList()
+    {
+        var categories = _categoryBLL.GetAll();
+        ViewBag.Categories = categories;
+        return View();
+    }
+
+    [HttpPost]
+    public IActionResult DisplayDropdownList(string CategoryID)
+    {
+        ViewBag.CategoryID = CategoryID;
+        ViewBag.Message = $"You selected {CategoryID}";
+
+        ViewBag.Categories = _categoryBLL.GetAll();
+
+        return View();
+    }
 
 }
