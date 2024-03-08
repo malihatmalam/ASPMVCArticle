@@ -58,6 +58,7 @@ namespace MyWebFormApp.BLL
             return articles;
         }
 
+
         public ArticleDTO GetArticleById(int id)
         {
             ArticleDTO article = new ArticleDTO();
@@ -83,6 +84,36 @@ namespace MyWebFormApp.BLL
         {
             List<ArticleDTO> articles = new List<ArticleDTO>();
             var articlesFromDAL = _articleDAL.GetArticleWithCategory();
+            foreach (var article in articlesFromDAL)
+            {
+                articles.Add(new ArticleDTO
+                {
+                    ArticleID = article.ArticleID,
+                    CategoryID = article.CategoryID,
+                    Title = article.Title,
+                    Details = article.Details,
+                    PublishDate = article.PublishDate,
+                    IsApproved = article.IsApproved,
+                    Pic = article.Pic,
+                    Category = new CategoryDTO
+                    {
+                        CategoryID = article.Category.CategoryID,
+                        CategoryName = article.Category.CategoryName
+                    }
+                });
+            }
+            return articles;
+        }
+
+        public int GetCountArticles(string name)
+        {
+            return _articleDAL.GetCountArticles(name);
+        }
+
+        public IEnumerable<ArticleDTO> GetWithPaging(int pageNumber, int pageSize, string name)
+        {
+            List<ArticleDTO> articles = new List<ArticleDTO>();
+            var articlesFromDAL = _articleDAL.GetWithPaging(pageNumber, pageSize, name);
             foreach (var article in articlesFromDAL)
             {
                 articles.Add(new ArticleDTO

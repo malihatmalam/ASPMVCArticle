@@ -8,7 +8,8 @@ namespace MyWebFormApp.DAL.Interfaces
         IEnumerable<Article> GetArticleWithCategory();
         IEnumerable<Article> GetArticleByCategory(int categoryId);
         int InsertWithIdentity(Article article);
-
         void InsertArticleWithCategory(Article article);
+        IEnumerable<Article> GetWithPaging(int pageNumber, int pageSize, string name);
+        int GetCountArticles(string name);
     }
 }

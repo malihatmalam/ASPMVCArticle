@@ -122,7 +122,7 @@ Public Class ArticleListManualPage
                 End If
             End If
 
-            Dim _articleBLL As New MyWebFormApp.BLL.ArticleBLL
+            Dim _articleBLL As New ArticleBLL
             Dim _article As New ArticleCreateDTO
             _article.CategoryID = CInt(ddCategories.SelectedValue)
             _article.Title = txtTitle.Text
