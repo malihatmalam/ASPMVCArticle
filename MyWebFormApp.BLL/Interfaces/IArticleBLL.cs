@@ -1,4 +1,5 @@
 ﻿using MyWebFormApp.BLL.DTOs;
+using MyWebFormApp.BO;
 using System.Collections.Generic;
 
 namespace MyWebFormApp.BLL.Interfaces
