@@ -1,4 +1,5 @@
-﻿Imports MyWebFormApp.BLL.DTOs
+﻿Imports System.Web.UI
+Imports MyWebFormApp.BLL.DTOs
 
 Public Class SiteMaster
     Inherits MasterPage
