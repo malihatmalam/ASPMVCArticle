@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using MyWebFormApp.BLL.DTOs;
 using MyWebFormApp.BLL;
 using MyWebFormApp.BLL.DTOs;
 using MyWebFormApp.BLL.Interfaces;
@@ -11,7 +10,6 @@ namespace SampleMVC.Controllers
     {
         private readonly ICategoryBLL _categoryBLL;
         private readonly IArticleBLL _articleBLL;
-        private CategoryBLL _categoryBLL;
 
         public ArticleController(IArticleBLL articleBLL, ICategoryBLL categoryBLL)
         {
