@@ -58,6 +58,7 @@ namespace MyWebFormApp.BLL
             return articles;
         }
 
+
         public ArticleDTO GetArticleById(int id)
         {
             ArticleDTO article = new ArticleDTO();
@@ -104,18 +105,18 @@ namespace MyWebFormApp.BLL
             return articles;
         }
 
-        public int GetCountArticles()
+        public int GetCountArticles(string name)
         {
-            return _articleDAL.GetCountArticles();
+            return _articleDAL.GetCountArticles(name);
         }
 
-        public IEnumerable<ArticleDTO> GetWithPaging(int categoryId, int pageNumber, int pageSize)
+        public IEnumerable<ArticleDTO> GetWithPaging(int pageNumber, int pageSize, string name, string categoryFilter)
         {
-            var articles = _articleDAL.GetWithPaging(categoryId, pageNumber, pageSize);
-            List<ArticleDTO> articlesDTO = new List<ArticleDTO>();
-            foreach (var article in articles)
+            List<ArticleDTO> articles = new List<ArticleDTO>();
+            var articlesFromDAL = _articleDAL.GetWithPaging(pageNumber, pageSize, name, categoryFilter);
+            foreach (var article in articlesFromDAL)
             {
-                articlesDTO.Add(new ArticleDTO
+                articles.Add(new ArticleDTO
                 {
                     ArticleID = article.ArticleID,
                     CategoryID = article.CategoryID,
@@ -131,10 +132,8 @@ namespace MyWebFormApp.BLL
                     }
                 });
             }
-            return articlesDTO;
+            return articles;
         }
-
-
 
         public void Insert(ArticleCreateDTO articleDto)
         {

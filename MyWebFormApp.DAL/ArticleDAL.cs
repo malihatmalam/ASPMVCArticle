@@ -261,51 +261,34 @@ namespace MyWebFormApp.DAL
             }
         }
 
-        //asumsi jika categoryId=0 maka select semua category
-        public IEnumerable<Article> GetWithPaging(int categoryId, int pageNumber, int pageSize)
+        public IEnumerable<Article> GetWithPaging(int pageNumber, int pageSize, string name, string categoryFilter)
         {
             using (SqlConnection conn = new SqlConnection(GetConnectionString()))
             {
-                if (categoryId == 0)
+                var strSql = @"select a.ArticleID, a.CategoryID, a.Title, a.Details, a.PublishDate, a.IsApproved, a.Pic, c.CategoryID, c.CategoryName from Articles as a inner join Categories as c on a.CategoryID = c.CategoryID 
+                               where a.Title like @Title and c.CategoryName like @CategoryFilter
+                               order by a.Title OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY";
+                var param = new { Title = $"%{name}%", CategoryFilter = $"%{categoryFilter}%", Offset = (pageNumber - 1) * pageSize, PageSize = pageSize };
+                var results = conn.Query<Article, Category, Article>(strSql, (article, category) =>
                 {
-                    var strSql = @"select a.*,c.* from Articles a 
-                               inner join Categories c on a.CategoryID = c.CategoryID 
-                               order by CategoryName OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY";
-                    var param = new { Offset = (pageNumber - 1) * pageSize, PageSize = pageSize };
-                    var results = conn.Query<Article, Category, Article>(strSql, (article, category) =>
-                    {
-                        article.Category = category;
-                        return article;
-                    }, param, splitOn: "CategoryID");
-                    return results;
-                }
-                else
-                {
-                    var strSql = @"select a.*,c.* from Articles a 
-                               inner join Categories c on a.CategoryID = c.CategoryID 
-                               where a.CategoryID=@CategoryID 
-                               order by CategoryName OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY";
-                    var param = new { CategoryID = categoryId, Offset = (pageNumber - 1) * pageSize, PageSize = pageSize };
-                    var results = conn.Query<Article, Category, Article>(strSql, (article, category) =>
-                    {
-                        article.Category = category;
-                        return article;
-                    }, param, splitOn: "CategoryID");
-                    return results;
-                }
+                    article.Category = category;
+                    return article;
+                }, param, splitOn: "CategoryID");
+                return results;
             }
         }
 
-        public int GetCountArticles()
+        public int GetCountArticles(string name)
         {
             using (SqlConnection conn = new SqlConnection(GetConnectionString()))
             {
-                var strSql = @"select count(*) from Articles";
-                var result = Convert.ToInt32(conn.ExecuteScalar(strSql));
+                var strSql = @"select count(*) from [Articles] 
+                               where [Title] like @Title";
+                var param = new { Title = $"%{name}%" };
+                var result = Convert.ToInt32(conn.ExecuteScalar(strSql, param));
                 return result;
             }
         }
-
 
     }
 }
