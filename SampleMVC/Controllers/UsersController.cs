@@ -59,7 +59,7 @@ namespace SampleMVC.Controllers
                 TempData["message"] = @"<div class='alert alert-danger'><strong>Error!&nbsp;</strong> User is required </div>";
                 return RedirectToAction("Index");
             }
-            if (roleId == null)
+            if (roleId < 0)
             {
                 TempData["message"] = @"<div class='alert alert-danger'><strong>Error!&nbsp;</strong> Role is required </div>";
                 return RedirectToAction("Index");

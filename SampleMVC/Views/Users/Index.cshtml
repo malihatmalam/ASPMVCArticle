@@ -29,7 +29,7 @@
                         </select><br />
                         <label for="Roles">Roles</label>
                         <select class="form-control" name="roleId">
-                            <option value="">--Select Role--</option>
+                            <option value="-1">--Select Role--</option>
                             @foreach (var role in ViewBag.Roles)
                             {
                                 <option value="@role.RoleID">@role.RoleName</option>
