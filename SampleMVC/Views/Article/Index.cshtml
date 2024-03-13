@@ -1,4 +1,6 @@
-﻿@model IEnumerable<MyWebFormApp.BLL.DTOs.ArticleDTO>
+﻿@using System.Text.Json
+@using System.Text
+@model IEnumerable<MyWebFormApp.BLL.DTOs.ArticleDTO>
 @{
     int pageNumber = 0;
     if (ViewData["pageNumber"] != null)
@@ -7,6 +9,18 @@
     }
 
     var categories = (List<CategoryDTO>)ViewBag.Categories;
+
+    var user = new UserDTO();
+    var roleString = new StringBuilder();
+    if (Context.Session.GetString("user") != null)
+    {
+        user = JsonSerializer.Deserialize<UserDTO>(Context.Session.GetString("user"));
+        List<RoleDTO> roles = user.Roles.ToList();
+        foreach (var role in roles)
+        {
+            roleString.Append(role.RoleName + ",");
+        }
+    }
 }
 
 <div class="row">
@@ -49,7 +63,15 @@
                     </div>
                 </form>
                 <br />
-                <a asp-action="Create" class="btn btn-success btn-sm">Create New Article</a><br /><br />
+                @if (roleString.ToString().Contains("contributor"))
+                {
+
+                    <a asp-action="Create" class="btn btn-success btn-sm">Create New Article</a>
+
+                    <br />
+
+                    <br />
+                }
                 <table class="table table-striped">
                     <tr>
                         <th>ID</th>
@@ -79,8 +101,11 @@
                                 <img src="~/Pics/@article.Pic" class="img-thumbnail" alt="..." Width="100">
                             </td>
                             <td>
-                                <a asp-action="Edit" asp-route-id="@article.ArticleID" class="btn btn-warning btn-sm">edit</a>
-                                <a asp-action="Delete" asp-route-id="@article.ArticleID" class="btn btn-danger btn-sm">delete</a>
+                                @if (roleString.ToString().Contains("contributor"))
+                                {
+                                    <a asp-action="Edit" asp-route-id="@article.ArticleID" class="btn btn-warning btn-sm">edit</a>
+                                    <a asp-action="Delete" asp-route-id="@article.ArticleID" class="btn btn-danger btn-sm">delete</a>
+                                }
                             </td>
 
                         </tr>

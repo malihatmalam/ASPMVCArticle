@@ -99,8 +99,18 @@ namespace SampleMVC.Controllers
 
         public IActionResult Profile()
         {
-            var userWithRoles = _userBLL.GetUserWithRoles("ekurniawan");
-            return new JsonResult(userWithRoles);
+            var userDTO = new UserDTO();
+            if (HttpContext.Session.GetString("user") == null)
+            {
+                TempData["message"] = @"<div class='alert alert-danger'><strong>Error!</strong>Anda harus login terlebih dahulu !</div>";
+                return RedirectToAction("Login", "Users");
+            }
+            else {
+                userDTO = JsonSerializer.Deserialize<UserDTO>(HttpContext.Session.GetString("user"));
+            }
+            //var userWithRoles = _userBLL.GetUserWithRoles("ekurniawan");
+            ViewBag.Roles = userDTO.Roles;
+            return View(userDTO);
         }
     }
 }
