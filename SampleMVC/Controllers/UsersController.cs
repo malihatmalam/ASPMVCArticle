@@ -20,6 +20,12 @@ namespace SampleMVC.Controllers
 
         public IActionResult Login()
         {
+            if (HttpContext.Session.GetString("user") != null)
+            {
+                TempData["message"] = @"<div class='alert alert-danger'><strong>Error!</strong>Anda harus login terlebih dahulu !</div>";
+                return RedirectToAction("index", "Users");
+            }
+
             if (TempData["Message"] != null)
             {
                 ViewBag.Message = TempData["Message"];
@@ -53,10 +59,14 @@ namespace SampleMVC.Controllers
             }
         }
 
+        [HttpPost]
+        [Route("/logout")]
         public IActionResult Logout()
         {
             HttpContext.Session.Remove("user");
+            TempData["message"] = String.Empty;
             return RedirectToAction("Login");
+
         }
 
         //register user baru
