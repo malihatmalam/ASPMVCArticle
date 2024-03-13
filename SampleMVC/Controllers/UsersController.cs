@@ -36,11 +36,13 @@ namespace SampleMVC.Controllers
         {
             if(string.IsNullOrEmpty(username))
             {
-                throw new ArgumentException("User is required");
+                TempData["message"] = @"<div class='alert alert-danger'><strong>Error!&nbsp;</strong> User is required </div>";
+                return RedirectToAction("Index");
             }
             if (roleId == null)
             {
-                throw new ArgumentException("User is required");
+                TempData["message"] = @"<div class='alert alert-danger'><strong>Error!&nbsp;</strong> Role is required </div>";
+                return RedirectToAction("Index");
             }
             try
             {
@@ -51,8 +53,8 @@ namespace SampleMVC.Controllers
             catch (Exception ex)
             {
                 TempData["message"] = @"<div class='alert alert-danger'><strong>Error!&nbsp;</strong>" + ex.Message + "</div>";
-                return View();
             }
+            return RedirectToAction("Index");
         }
 
         public IActionResult Login()
