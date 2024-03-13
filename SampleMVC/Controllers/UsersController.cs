@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using MyWebFormApp.BLL.DTOs;
 using MyWebFormApp.BLL.Interfaces;
 using System.Text.Json;
+using static Dapper.SqlMapper;
 
 namespace SampleMVC.Controllers
 {
@@ -20,15 +21,38 @@ namespace SampleMVC.Controllers
         public IActionResult Index()
         {
             var users = _userBLL.GetAll();
-            var listUsers = new SelectList(users, "Username", "Username");
-            ViewBag.Users = listUsers;
+            ViewBag.Users = users;
 
             var roles = _roleBLL.GetAllRoles();
-            var listRoles = new SelectList(roles, "RoleID", "RoleName");
-            ViewBag.Roles = listRoles;
+            
+            ViewBag.Roles = roles;
 
             var usersWithRoles = _userBLL.GetAllWithRoles();
             return View(usersWithRoles);
+        }
+
+        [HttpPost]
+        public IActionResult AddRole(string username, int roleId) 
+        {
+            if(string.IsNullOrEmpty(username))
+            {
+                throw new ArgumentException("User is required");
+            }
+            if (roleId == null)
+            {
+                throw new ArgumentException("User is required");
+            }
+            try
+            {
+                _roleBLL.AddUserToRole(username, roleId);
+                TempData["message"] = @"<div class='alert alert-success'><strong>Success!</strong>Add Data Category Success !</div>";
+                return RedirectToAction("Index", "Users");
+            }
+            catch (Exception ex)
+            {
+                TempData["message"] = @"<div class='alert alert-danger'><strong>Error!&nbsp;</strong>" + ex.Message + "</div>";
+                return View();
+            }
         }
 
         public IActionResult Login()
