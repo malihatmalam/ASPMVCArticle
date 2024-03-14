@@ -7,6 +7,7 @@ namespace MyWebFormApp.BLL.Interfaces
     {
         void Insert(ArticleCreateDTO article);
         IEnumerable<ArticleDTO> GetArticleWithCategory();
+        IEnumerable<ArticleDTO> GetAll();
         IEnumerable<ArticleDTO> GetArticleByCategory(int categoryId);
         int InsertWithIdentity(ArticleCreateDTO article);
         void Update(ArticleUpdateDTO article);
