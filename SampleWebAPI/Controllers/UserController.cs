@@ -1,18 +1,16 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using MyWebFormApp.BLL;
 using MyWebFormApp.BLL.DTOs;
 using MyWebFormApp.BLL.Interfaces;
-using MyWebFormApp.BO;
 
 namespace SampleWebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ArticleController : ControllerBase
+    public class UserController : ControllerBase
     {
-        private readonly IArticleBLL _articleBLL;
-        public ArticleController(IArticleBLL articleBLL)
+        private readonly IUserBLL _userBLL;
+        public UserController(IUserBLL userBLL)
         {
             _articleBLL = articleBLL;
         }
