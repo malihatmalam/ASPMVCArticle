@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using FluentValidation;
+using Microsoft.AspNetCore.Mvc;
 using MyRESTServices.BLL.DTOs;
 using MyRESTServices.BLL.Interfaces;
 
@@ -9,9 +10,16 @@ namespace MyRESTServices.Controllers
     public class CategoriesController : ControllerBase
     {
         private readonly ICategoryBLL _categoryBLL;
-        public CategoriesController(ICategoryBLL categoryBLL)
+        private readonly IValidator<CategoryCreateDTO> _validatorCategoryCreate;
+        private readonly IValidator<CategoryUpdateDTO> _validatorCategoryUpdate;
+
+        public CategoriesController(ICategoryBLL categoryBLL, 
+            IValidator<CategoryCreateDTO> validatorCategoryCreate, 
+            IValidator<CategoryUpdateDTO> validatorCategoryUpdate)
         {
             _categoryBLL = categoryBLL;
+            _validatorCategoryCreate = validatorCategoryCreate;
+            _validatorCategoryUpdate = validatorCategoryUpdate;
         }
 
         [HttpGet]
@@ -22,9 +30,42 @@ namespace MyRESTServices.Controllers
         }
 
         [HttpGet("{id}")]
-        public IActionResult Get(int id)
+        public async Task<IActionResult> Get(int id)
         {
-            var result = _categoryBLL.GetById(id);
+            var result = await _categoryBLL.GetById(id);
+            if (result == null)
+            {
+                return NotFound();
+            }
+            return Ok(result);
+        }
+
+        [HttpGet("search/{name}")]
+        public async Task<IActionResult> Search(string name)
+        {
+            var result = await _categoryBLL.GetByName(name);
+            if (result == null)
+            {
+                return NotFound();
+            }
+            return Ok(result);
+        }
+
+        [HttpGet("pagination/{pageNumber}/{pageSize}/{name}")]
+        public async Task<IActionResult> GetPagination(int pageNumber, int pageSize, string name)
+        {
+            var result = await _categoryBLL.GetWithPaging(pageNumber,pageSize,name);
+            if (result == null)
+            {
+                return NotFound();
+            }
+            return Ok(result);
+        }
+
+        [HttpGet("count/{name}")]
+        public async Task<IActionResult> GetCount(string name)
+        {
+            var result = await _categoryBLL.GetCountCategories(name);
             if (result == null)
             {
                 return NotFound();
@@ -33,7 +74,7 @@ namespace MyRESTServices.Controllers
         }
 
         [HttpPost]
-        public IActionResult Post(CategoryCreateDTO categoryCreateDTO)
+        public async Task<IActionResult> Post(CategoryCreateDTO categoryCreateDTO)
         {
             if (categoryCreateDTO == null)
             {
@@ -42,8 +83,14 @@ namespace MyRESTServices.Controllers
 
             try
             {
-                _categoryBLL.Insert(categoryCreateDTO);
-                return Ok("Insert data success");
+                var validatorResult = await _validatorCategoryCreate.ValidateAsync(categoryCreateDTO);
+                if (!validatorResult.IsValid)
+                {
+                    Helpers.Extensions.AddToModelState(validatorResult, ModelState);
+                    return BadRequest(ModelState);
+                }
+                var insertedCategory = await _categoryBLL.Insert(categoryCreateDTO);
+                return CreatedAtAction(nameof(Get), new { id = insertedCategory.CategoryID }, insertedCategory);
             }
             catch (Exception ex)
             {
@@ -52,17 +99,23 @@ namespace MyRESTServices.Controllers
         }
 
         [HttpPut("{id}")]
-        public IActionResult Put(int id, CategoryUpdateDTO categoryUpdateDTO)
+        public async Task<IActionResult> Put(int id, CategoryUpdateDTO categoryUpdateDTO)
         {
-            if (_categoryBLL.GetById(id) == null)
+            if (await _categoryBLL.GetById(id) == null)
             {
                 return NotFound();
             }
 
             try
             {
-                _categoryBLL.Update(categoryUpdateDTO);
-                return Ok("Update data success");
+                var validatorResult = await _validatorCategoryUpdate.ValidateAsync(categoryUpdateDTO);
+                if (!validatorResult.IsValid)
+                {
+                    Helpers.Extensions.AddToModelState(validatorResult, ModelState);
+                    return BadRequest(ModelState);
+                }
+                var updatedCategory = await _categoryBLL.Update(categoryUpdateDTO);
+                return Ok(updatedCategory);
             }
             catch (Exception ex)
             {
@@ -71,16 +124,16 @@ namespace MyRESTServices.Controllers
         }
 
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            if (_categoryBLL.GetById(id) == null)
+            if (await _categoryBLL.GetById(id) == null)
             {
                 return NotFound();
             }
 
             try
             {
-                _categoryBLL.Delete(id);
+                await _categoryBLL.Delete(id);
                 return Ok("Delete data success");
             }
             catch (Exception ex)
